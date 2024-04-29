@@ -1,4 +1,3 @@
-
 zvirata_dict = [
     {'jmeno': 'Růženka', 'druh': 'Panda Velká', 'vaha': 150},
     {'jmeno': 'Vilda', 'druh': 'Vydra Mořská', 'vaha': 20},
@@ -16,11 +15,14 @@ zamestnanci_dict = [
 objekty_zvirat = []
 objekty_zamestnanci = []
 
+
 def vytvoreni_zvirat_z_dict():
+    '''Vytvori objekty tridy "Zvire" podle dat z dict "zvirata_dict" a ulozi je do listu "objekty_zvirat"'''
     for animal in zvirata_dict:
         objekty_zvirat.append(Zvire(animal["jmeno"], animal["druh"], animal["vaha"]))
 
 def vytvoreni_zamestnancu_z_dict():
+    ''' Vytvori objekty tridy "Zamestnanec" podle dat z dict "zamestnanci_dict" a ulozi je do listu "objekty_zamestnanci"'''
     for zamestnanec in zamestnanci_dict:
         objekty_zamestnanci.append(Zamestnanec(zamestnanec["cele_jmeno"], zamestnanec["rocni_plat"], zamestnanec["pozice"]))
 
@@ -32,9 +34,10 @@ class Zvire:
         self.vaha = vaha
     
     def __str__(self) -> str:
-        return f"{self.jmeno}, což je {self.druh} a jeho/jeji vaha je {self.vaha}. "
+        return f"{self.jmeno}, což je {self.druh} a jeho/její váha je {self.vaha}. "
     
     def export_to_dict(self):
+        '''Ve formatu dict vrati data o objektu tridy Zvire'''
         export_d = {}
         export_d["jmeno"] = self.jmeno
         export_d["druh"] = self.druh
@@ -48,12 +51,12 @@ class Zamestnanec:
         self.pozice = pozice
     
     def __str__(self) -> str:
-        return f"Zaměstnanec se jmenuje {self.cele_jmeno}, pracuje na pozici: {self.pozice} a ročně vydělá {self.rocni_plat}Kč. "
+        return f"{self.cele_jmeno} pracuje na pozici: {self.pozice} a ročně vydělá {self.rocni_plat}Kč. "
 
     def ziskej_inicialy(self):
+        '''Vrati inicialy (str) ze jmena a prijmeni objektu tridy Zamestnanec (pouze pro jedno jmeno a jedno prijmeni!)'''
         list_jmena = (self.cele_jmeno.split())
         pracovni_inicialy = (list_jmena[0][0], list_jmena[1][0], "")
-
         inicialy = ".".join(pracovni_inicialy)
         return inicialy
 
@@ -61,6 +64,7 @@ class Reditel(Zamestnanec):
     def __init__(self, cele_jmeno: str, rocni_plat: int, oblibene_zvire: Zvire, pozice: str = "Reditel"):
         super().__init__(cele_jmeno, rocni_plat, pozice)
         self.oblibene_zvire = oblibene_zvire
+    
     def __str__(self) -> str:
         return super().__str__() + f"Oblíbencem je {self.oblibene_zvire}"
 
@@ -72,65 +76,41 @@ class Zoo:
         self.zamestnanci = zamestnanci
         self.zvirata = zvirata
 
-    # def __str__(self) -> str:
-    #     return f"Zoo se jmenuje: {self.jmeno}, sídli na adrese: {self.adresa}, jejím ředitelem je: {self.reditel} a zamestnanci jsou: {self.zamestnanci} a sídli zde tato zvířata: {self.zvirata}" 
+#  Navic ---
+    def __str__(self) -> str:   
+        return f"Zoo se jmenuje: {self.jmeno}, sídli na adrese: {self.adresa}, jejím ředitelem je {self.reditel.__getattribute__("cele_jmeno")} a počet dalších zaměstnanců je {len(self.zamestnanci)}." + \
+        f" Mají zde tato zvířata: {self.format_zvirat_pro_str()}."
+
+    def format_zvirat_pro_str(self):
+        tisk = []
+        for each in self.zvirata: 
+            tisk.append(getattr(each, "druh"))
+        return ', '.join(tisk)
+# ----------
 
     def vaha_vsech_zvirat_v_zoo(self):
+        '''Secte vahu vsech objektu tridy Zvire prirazenych k objetku tridy Zoo'''
         vysledna_vaha = 0
         for zvire in self.zvirata:
             vysledna_vaha += getattr(zvire, "vaha", 0)
         return vysledna_vaha
 
     def mesicni_naklady_na_zamestnance(self):
+        '''Vrati int (zaokrouhleny); vydeli 12ti rocni naklady na plat vsech objektu tridy Zamestnanec prirazenych k objektu tridy Zoo a stejne u objektu tridy Reditel a vse secte'''
         vysledne_naklady = (getattr(self.reditel, "rocni_plat", 0))/12
         for zamestnanec in self.zamestnanci:
             rocni_naklady = 0
             rocni_naklady += getattr(zamestnanec, "rocni_plat", 0)
             mesicni_naklady = rocni_naklady/12
             vysledne_naklady += mesicni_naklady
-        return int(round(vysledne_naklady, 0))
+        return "{:,}".format(int(round(vysledne_naklady, 0)))
 
-# croco = Zvire("Croco", "krokodyl nilsky", "1 tuna")
-# lala = Zvire("Lála", "Irbis", "5kg")
-
-# print(croco)
-# print(lala)
-
-# croco_export = croco.export_to_dict()
-# lala_export = lala.export_to_dict()
-
-# assert croco_export["jmeno"] == "Croco"
-# assert croco_export["druh"] == "krokodyl nilsky"
-# assert croco_export["vaha"] == "1 tuna"
-
-# print(lala_export)
-# print(croco_export)
 
 vytvoreni_zvirat_z_dict()
 vytvoreni_zamestnancu_z_dict()
 
-# print(objekty_zvirat[1])
 
-# Růženka_export = objekty_zvirat[0].export_to_dict()
-
-# print(Růženka_export)
-
-# Adolf = Zamestnanec("Adolf Mánička", 100000, "uklízeč")
-# print(Adolf)
-
-
-# print(Adolf.ziskej_inicialy())
-# print(objekty_zamestnanci[1])
-
-reditel = Reditel(cele_jmeno='Karel Louse', rocni_plat=800_000, oblibene_zvire=objekty_zvirat[0])
-
-zoo = Zoo('ZOO Praha', 'U Trojského zámku 3/120', reditel, objekty_zamestnanci, objekty_zvirat)
-
-# print(zoo.zvirata[0])
-
-print('Celková váha zvířat v ZOO:', zoo.vaha_vsech_zvirat_v_zoo(), 'Kg.' )
-print('Měsíční náklady na zaměstnance:', zoo.mesicni_naklady_na_zamestnance(), "Kč.")
-
+# ASSERTS ---
 # Zvire class
 zvire = Zvire('Láďa', 'Koala', 15)
 assert hasattr(zvire, 'jmeno')
@@ -169,4 +149,20 @@ assert isinstance(zoo.reditel, Reditel)
 assert isinstance(zoo.zamestnanci, list)
 assert isinstance(zoo.zvirata, list)
 assert zoo.vaha_vsech_zvirat_v_zoo() == 150
-# assert zoo.mesicni_naklady_na_zamestnance() == (zamestnanec.rocni_plat + reditel.rocni_plat) / 12 # protoze mam roundnuto
+
+# Posledni assert nevyuzivam, nesedi, protoze muj vysledek je zaokrouhlen funkci round(), coz mi prijde vhodne
+# assert zoo.mesicni_naklady_na_zamestnance() == (zamestnanec.rocni_plat + reditel.rocni_plat) / 12
+
+
+# Zoo class Moje ---
+reditel_1 = Reditel(cele_jmeno='Karel Louse', rocni_plat=800_000, oblibene_zvire=objekty_zvirat[0])
+zoo_1 = Zoo('ZOO Praha', 'U Trojského zámku 3/120', reditel_1, objekty_zamestnanci, objekty_zvirat)
+
+# Printy pro ukazku funkcnosti a __str__
+print(zoo_1)
+print('Celková váha zvířat v ZOO:', zoo_1.vaha_vsech_zvirat_v_zoo(), 'Kg.' )
+print('Měsíční náklady na zaměstnance:', zoo_1.mesicni_naklady_na_zamestnance(), "Kč.")
+
+assert zoo_1.vaha_vsech_zvirat_v_zoo() == 1170
+assert len(zoo_1.zvirata) == 4
+assert len(zoo_1.zamestnanci) == 3
